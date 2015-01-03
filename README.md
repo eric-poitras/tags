@@ -1,24 +1,49 @@
-classtags
-=========
+# class tags
 
-The goals:
+#### Use cases
 
-1. Easily tag classes with annotations for later discovery.
-2. Avoid using class path scanning.
-3. Easy to define new tags.
+1. Allows to define tags for each specific uses.
+2. Tag classes with annotations for later discovery while avoiding class path scanning.
 
-The components:
+#### Usage
+
+Import the project from maven central:
+
+```
+<dependency>
+	<groupId>org.dbrain.tool</groupId>
+	<artifactId>classtags</artifactId>
+	<version>0.1</version>
+</dependency>
+```
+
+Define your own tag annotation by annotating it with the @ClassTagAnnotation:
+```
+@ClassTagAnnotation
+@Target( ElementType.TYPE )
+public @interface MyTag {}
+```
+
+Then query tags using the API:
+```
+  List<String> myTaggedClasses = ClassTagQuery.listClassNameByTag( MyTag.class );
+```
+
+#### Components
 
 1. An annotation processor that keeps track of classes tagged with specific custom annotations.
 2. An engine to query gathered information.
 
-The limits:
+#### Troubleshooting
 
-1. Only works for code that you compile.
-2. This version only target JDK 8 because it is the version I use but it can easily be backported to 7 and 6.
+For this to works as expected, you have to make sure:
 
-Standard use cases:
+1. Your development environment support and discovered the annotation processor. It is auto-discoverable and works fine with IntelliJ but I did not tested interoperability with Eclipse or NetBean. Check for the compilation switch: -proc:XXX.
+2. For most cases, the annotation processor support incremental compilation but if the meta-file go out-of-sync, just perform a full compilation.
 
-1. Discover classes that are to be fed to a JERSEY end-point.
-2. Discover classes that are to be registred in a DI.
-3. You have old code that uses evil static declarations and you need to eagerly load thoses classes.
+#### Roadmap 
+
+1. User-defined tag definition files to works with 3rd party libraries.
+2. Enhanced error handling.
+3. Support annotations on packages.
+4. Support older JDK versions ?
