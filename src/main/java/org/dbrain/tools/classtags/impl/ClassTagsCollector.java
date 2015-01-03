@@ -16,7 +16,6 @@
 
 package org.dbrain.tools.classtags.impl;
 
-import org.dbrain.tools.classtags.ClassTagEntry;
 import org.dbrain.tools.classtags.ClassTags;
 
 import java.util.Set;

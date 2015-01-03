@@ -16,8 +16,6 @@
 
 package org.dbrain.tools.classtags.impl;
 
-import org.dbrain.tools.classtags.ClassTagEntry;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

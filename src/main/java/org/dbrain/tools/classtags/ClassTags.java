@@ -16,6 +16,7 @@
 
 package org.dbrain.tools.classtags;
 
+import java.lang.annotation.Annotation;
 import java.util.Set;
 
 public class ClassTags {
@@ -40,6 +41,13 @@ public class ClassTags {
      */
     public Set<String> getTags() {
         return tags;
+    }
+
+    /**
+     * True if the class has the specific tag.
+     */
+    public boolean containsTag( Class<? extends Annotation> tag ) {
+        return tag != null && tags.contains( tag.getName() );
     }
 
     @Override

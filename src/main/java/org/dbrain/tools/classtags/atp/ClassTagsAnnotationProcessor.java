@@ -9,7 +9,7 @@ package org.dbrain.tools.classtags.atp;
 
 
 import org.dbrain.tools.classtags.ClassTagAnnotation;
-import org.dbrain.tools.classtags.ClassTagEntry;
+import org.dbrain.tools.classtags.impl.ClassTagEntry;
 import org.dbrain.tools.classtags.impl.ClassTagUtils;
 
 import javax.annotation.processing.AbstractProcessor;

@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.tools.classtags;
+package org.dbrain.tools.classtags.impl;
 
 import java.util.Objects;
 

@@ -16,6 +16,7 @@
 
 package org.dbrain.tools.classtags;
 
+import org.dbrain.tools.classtags.impl.ClassTagEntry;
 import org.dbrain.tools.classtags.impl.ClassTagUtils;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 /**
  * Static methods to query tag databases built using the annotation processor.
- *
+ * <p>
  * If the class loader is not specified in a method, it's this class's class loader that is used.
  */
 public class ClassTagQuery {
@@ -45,9 +46,16 @@ public class ClassTagQuery {
      * Filter entries as read from the metadata info. Use this filter if you are interested only on
      * specific tags.
      */
-    public ClassTagQuery filterEntries( Predicate<ClassTagEntry> entryFilter ) {
+    private ClassTagQuery filterEntries( Predicate<ClassTagEntry> entryFilter ) {
         this.entryFilter = entryFilter;
         return this;
+    }
+
+    /**
+     * @return The class loader that should be used.
+     */
+    private ClassLoader getEffectiveClassLoader() {
+        return classLoader != null ? classLoader : getClass().getClassLoader();
     }
 
     /**
@@ -74,15 +82,13 @@ public class ClassTagQuery {
      * Load all entries and return it in a set.
      */
     private Set<ClassTagEntry> getEntries() throws IOException {
-        return ClassTagUtils.loadEntries( classLoader != null ? classLoader : getClass().getClassLoader(),
-                                          new HashSet<>(),
-                                          entryFilter );
+        return ClassTagUtils.loadEntries( getEffectiveClassLoader(), new HashSet<>(), entryFilter );
     }
 
     /**
      * Aggregate the entries in classes and filter them if necessary.
      */
-    public Map<String, ClassTags> mapTagsByClass() throws IOException {
+    public Map<String, ClassTags> mapTagsByClassName() throws IOException {
         Set<ClassTagEntry> entries = getEntries();
 
         Map<String, ClassTags> result = new HashMap<>( entries.size() );
@@ -111,7 +117,7 @@ public class ClassTagQuery {
      * List the tags.
      */
     public List<ClassTags> listAsClassTags() throws IOException {
-        List<ClassTags> result = new ArrayList<>( mapTagsByClass().values() );
+        List<ClassTags> result = new ArrayList<>( mapTagsByClassName().values() );
         result.sort( Comparator.comparing( tags -> tags.getClassName() ) );
         return result;
     }
@@ -120,34 +126,37 @@ public class ClassTagQuery {
      * List the classes.
      */
     public List<String> listAsClassNames() throws IOException {
-        return mapTagsByClass().values()
-                               .stream()
-                               .map( tags -> tags.getClassName() )
-                               .sorted()
-                               .collect( Collectors.toList() );
+        return mapTagsByClassName().values()
+                                   .stream()
+                                   .map( tags -> tags.getClassName() )
+                                   .sorted()
+                                   .collect( Collectors.toList() );
     }
-
 
     /**
-     * Query all classes tagged with the specific tag.
+     * List the classes.
      */
-    public static List<String> listClassNameByTag( ClassLoader cl,
-                                                   Class<? extends Annotation> tagAnnotation ) throws Exception {
-        return new ClassTagQuery()
-                .classLoader( cl )
-                .filterEntries( entry -> entry.getTagName().equals( tagAnnotation.getName() ) )
-                .listAsClassNames();
-
+    public List<Class> list() throws Exception {
+        return mapTagsByClassName().values()
+                                   .stream()
+                                   .map( tags -> {
+                                       try {
+                                           return getEffectiveClassLoader().loadClass( tags.getClassName() );
+                                       } catch( ClassNotFoundException e ) {
+                                           return null;
+                                       }
+                                   } )
+                                   .filter( ( c ) -> c != null )
+                                   .collect( Collectors.toList() );
     }
+
 
     /**
      * Query all classes tagged with the specific tag.
      */
     public static List<String> listClassNameByTag( Class<? extends Annotation> tagAnnotation ) throws Exception {
-        return new ClassTagQuery()
-                .filterEntries( entry -> entry.getTagName().equals( tagAnnotation.getName() ) )
-                .listAsClassNames();
-
+        return new ClassTagQuery().filterEntries( entry -> entry.getTagName().equals( tagAnnotation.getName() ) )
+                                  .listAsClassNames();
     }
 
 }

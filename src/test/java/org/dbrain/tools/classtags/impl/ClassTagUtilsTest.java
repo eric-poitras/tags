@@ -16,7 +16,6 @@
 
 package org.dbrain.tools.classtags.impl;
 
-import org.dbrain.tools.classtags.ClassTagEntry;
 import org.junit.Assert;
 import org.junit.Test;
 
