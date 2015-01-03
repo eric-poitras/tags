@@ -71,7 +71,7 @@ public class ClassTagUtils {
 
     /**
      * Read a file of class tags.
-     * <p/>
+     *
      * It returns a map of class names with each a list of tag annotation names found on the class.
      */
     public static <T extends Collection<ClassTagEntry>> T loadEntries( InputStream inf, T to, Predicate<ClassTagEntry> filter ) throws IOException {

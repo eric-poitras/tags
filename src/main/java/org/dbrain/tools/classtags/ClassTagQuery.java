@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 /**
  * Static methods to query tag databases built using the annotation processor.
- * <p/>
+ *
  * If the class loader is not specified in a method, it's this class's class loader that is used.
  */
 public class ClassTagQuery {
