@@ -1,0 +1,2 @@
+org.dbrain.tools.classtags.Sample:org.dbrain.tools.classtags.ResourceRest
+org.dbrain.tools.classtags.Sample2:org.dbrain.tools.classtags.ResourceRest
