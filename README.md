@@ -15,6 +15,7 @@ The components:
 The limits:
 
 1. Only works for code that you compile.
+2. This version only target JDK 8 because it is the version I use but it can easily be backported to 7 and 6.
 
 Standard use cases:
 
