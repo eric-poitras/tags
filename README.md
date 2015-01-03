@@ -9,7 +9,7 @@ The goals:
 
 The components:
 
-1. An annotation processor that keeps track of classes tagged with specific annotation.
+1. An annotation processor that keeps track of classes tagged with specific custom annotations.
 2. An engine to query gathered information.
 
 The limits:
