@@ -77,6 +77,17 @@ public class ClassTag_queryClassName_Test {
         Assert.assertTrue( result1.contains( SimpleClass2.class ) );
     }
 
+    /**
+     * Simple query.
+     */
+    @Test
+    public void testQuerySimple4() throws Exception {
+        List<Class> result1 = ClassTagQuery.listByTag( SimpleTag.class );
+
+        Assert.assertEquals( 2, result1.size() );
+        Assert.assertTrue( result1.contains( SimpleClass1.class ) );
+        Assert.assertTrue( result1.contains( SimpleClass2.class ) );
+    }
 
     /**
      * Complex query.

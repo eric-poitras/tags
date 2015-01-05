@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -111,6 +112,20 @@ public class ClassTagUtils {
             out.println( e );
         }
         out.close();
+    }
+
+    /**
+     * Load a single class. In case of error, redirect error to a specific consumer and return null.
+     */
+    public static Class<?> loadClass( ClassLoader cl, String className, Consumer<ClassNotFoundException> onError) {
+        try {
+            return cl.loadClass( className );
+        } catch ( ClassNotFoundException e ) {
+            if ( onError != null ) {
+                onError.accept( e );
+            }
+            return null;
+        }
     }
 
 }

@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -38,9 +39,10 @@ import java.util.stream.Collectors;
  */
 public class ClassTagQuery {
 
-    private ClassLoader              classLoader;
-    private Predicate<ClassTagEntry> entryFilter;
-    private Predicate<ClassTags>     filter;
+    private ClassLoader                      classLoader;
+    private Predicate<ClassTagEntry>         entryFilter;
+    private Predicate<ClassTags>             filter;
+    private Consumer<ClassNotFoundException> onClassLoadError;
 
     /**
      * Filter entries as read from the metadata info. Use this filter if you are interested only on
@@ -75,6 +77,14 @@ public class ClassTagQuery {
      */
     public ClassTagQuery classLoader( ClassLoader cl ) {
         classLoader = cl;
+        return this;
+    }
+
+    /**
+     * Called when there is error on class loading.
+     */
+    public ClassTagQuery onClassLoadError( Consumer<ClassNotFoundException> e ) {
+        onClassLoadError = e;
         return this;
     }
 
@@ -134,18 +144,14 @@ public class ClassTagQuery {
     }
 
     /**
-     * List the classes.
+     * List the classes that match the query and loads without error.
      */
     public List<Class> list() throws Exception {
         return mapTagsByClassName().values()
                                    .stream()
-                                   .map( tags -> {
-                                       try {
-                                           return getEffectiveClassLoader().loadClass( tags.getClassName() );
-                                       } catch( ClassNotFoundException e ) {
-                                           return null;
-                                       }
-                                   } )
+                                   .map( tags -> ClassTagUtils.loadClass( getEffectiveClassLoader(),
+                                                                          tags.getClassName(),
+                                                                          onClassLoadError ) )
                                    .filter( ( c ) -> c != null )
                                    .collect( Collectors.toList() );
     }
@@ -158,5 +164,14 @@ public class ClassTagQuery {
         return new ClassTagQuery().filterEntries( entry -> entry.getTagName().equals( tagAnnotation.getName() ) )
                                   .listAsClassNames();
     }
+
+    /**
+     * Query all classes tagged with the specific tag.
+     */
+    public static List<Class> listByTag( Class<? extends Annotation> tagAnnotation ) throws Exception {
+        return new ClassTagQuery().filterEntries( entry -> entry.getTagName().equals( tagAnnotation.getName() ) )
+                                  .list();
+    }
+
 
 }
