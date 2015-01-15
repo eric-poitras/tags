@@ -23,11 +23,17 @@ import org.dbrain.tools.classtags.samples.complex.ComplexTag2;
 import org.dbrain.tools.classtags.samples.inheritance.InheritedClass1;
 import org.dbrain.tools.classtags.samples.inheritance.InheritedClass2;
 import org.dbrain.tools.classtags.samples.inheritance.InheritedTag;
+import org.dbrain.tools.classtags.samples.inheritanceinft.InheritedIntf1;
+import org.dbrain.tools.classtags.samples.inheritanceinft.InheritedIntf2;
+import org.dbrain.tools.classtags.samples.inheritanceinft.InheritedIntfTag;
 import org.dbrain.tools.classtags.samples.multiple.MultiClass;
 import org.dbrain.tools.classtags.samples.multiple.MultiTag1;
 import org.dbrain.tools.classtags.samples.simple.SimpleClass1;
 import org.dbrain.tools.classtags.samples.simple.SimpleClass2;
 import org.dbrain.tools.classtags.samples.simple.SimpleTag;
+import org.dbrain.tools.classtags.samples.simpleintf.SimpleIntf1;
+import org.dbrain.tools.classtags.samples.simpleintf.SimpleIntf2;
+import org.dbrain.tools.classtags.samples.simpleintf.SimpleIntfTag;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -90,6 +96,19 @@ public class ClassTag_queryClassName_Test {
     }
 
     /**
+     * Query over interfaces.
+     */
+    @Test
+    public void testQuerySimpleIntf1() throws Exception {
+        List<Class> result1 = ClassTagQuery.listByTag( SimpleIntfTag.class );
+
+        Assert.assertEquals( 2, result1.size() );
+        Assert.assertTrue( result1.contains( SimpleIntf1.class ) );
+        Assert.assertTrue( result1.contains( SimpleIntf2.class ) );
+    }
+
+
+    /**
      * Complex query.
      */
     @Test
@@ -129,7 +148,7 @@ public class ClassTag_queryClassName_Test {
 
 
     /**
-     * Simple query that return one class.
+     * Query over an inherited tag.
      */
     @Test
     public void testInheritedTag() throws Exception {
@@ -139,5 +158,19 @@ public class ClassTag_queryClassName_Test {
         Assert.assertTrue( result.contains( InheritedClass1.class.getName() ) );
         Assert.assertTrue( result.contains( InheritedClass2.class.getName() ) );
     }
+
+    /**
+     * Query over an inherited tag on interfaces.
+     */
+    @Test
+    public void testInheritedTagOnInterface() throws Exception {
+        List<String> result = ClassTagQuery.listClassNameByTag( InheritedIntfTag.class );
+
+        // Annotation are not inherited on interfaces.
+        Assert.assertEquals( 1, result.size() );
+        Assert.assertTrue( result.contains( InheritedIntf1.class.getName() ) );
+        Assert.assertFalse( result.contains( InheritedIntf2.class.getName() ) );
+    }
+
 
 }

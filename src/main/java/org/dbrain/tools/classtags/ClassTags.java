@@ -19,6 +19,9 @@ package org.dbrain.tools.classtags;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
+/**
+ * Contains the tags over a single class.
+ */
 public class ClassTags {
 
     private final String      className;
