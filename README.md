@@ -24,6 +24,12 @@ Define your own tag annotation by annotating it with the @ClassTagAnnotation:
 public @interface MyTag {}
 ```
 
+Tag your classes with your new tag:
+```
+@MyTag
+public class ToDiscover {}
+```
+
 Then query tags using the API:
 ```
   List<String> myTaggedClasses = ClassTagQuery.listClassNameByTag( MyTag.class );
