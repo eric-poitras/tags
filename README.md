@@ -30,7 +30,7 @@ Tag classes:
 public class ToDiscover {}
 ```
 
-Then query tags using the API:
+Then query tagged classes using the API:
 ```
   List<String> myTaggedClasses = ClassTagQuery.listClassNameByTag( MyTag.class );
 ```
