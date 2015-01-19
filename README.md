@@ -38,7 +38,7 @@ Then query tags using the API:
 
 For this to works as expected, you have to make sure:
 
-1. Your development environment support and discovered the annotation processor. It is auto-discoverable and works fine with IntelliJ but I did not tested interoperability with Eclipse or NetBean. Check for the compilation switch: -proc:XXX.
+1. Your development environment must support and discover the annotation processor.
 2. For most cases, the annotation processor support incremental compilation but if the meta-file go out-of-sync, just perform a full compilation.
 
 #### Roadmap 
