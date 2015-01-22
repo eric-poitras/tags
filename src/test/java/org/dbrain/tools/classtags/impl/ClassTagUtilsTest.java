@@ -19,6 +19,7 @@ package org.dbrain.tools.classtags.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.Set;
 
 /**
@@ -28,7 +29,10 @@ public class ClassTagUtilsTest {
 
     @Test
     public void testReadTags() throws Exception {
-        Set<ClassTagEntry> x = ClassTagUtils.loadEntries( getClass().getResourceAsStream( "/sample.txt" ) );
-        Assert.assertEquals( x.size(), 2 );
+
+        try ( InputStream is = getClass().getResourceAsStream( "/sample.txt" ) ) {
+            Set<ClassTagEntry> x = ClassTagUtils.loadEntries( is );
+            Assert.assertEquals( x.size(), 2 );
+        }
     }
 }

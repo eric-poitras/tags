@@ -57,10 +57,10 @@ public class ClassTagUtils {
     /**
      * Query all classes tagged with the specific tag.
      */
-    public static <T extends Collection<ClassTagEntry>> T loadEntries( ClassLoader cl,
+    public static <T extends Collection<ClassTagEntry>> T loadEntries( List<URL> resources,
                                     T to,
                                     Predicate<ClassTagEntry> filter ) throws IOException {
-        for ( URL u : ClassTagUtils.listResources( cl ) ) {
+        for ( URL u : resources ) {
             try ( InputStream is = u.openStream() ) {
                 ClassTagUtils.loadEntries( is, to, filter );
             }

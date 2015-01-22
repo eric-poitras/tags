@@ -21,6 +21,7 @@ import org.dbrain.tools.classtags.impl.ClassTagUtils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 public class ClassTagQuery {
 
     private ClassLoader                      classLoader;
+    private List<URL>                        externalResources;
     private Predicate<ClassTagEntry>         entryFilter;
     private Predicate<ClassTags>             filter;
     private Consumer<ClassNotFoundException> onClassLoadError;
@@ -83,8 +85,19 @@ public class ClassTagQuery {
     /**
      * Called when there is error on class loading.
      */
-    public ClassTagQuery onClassLoadError( Consumer<ClassNotFoundException> e ) {
+    public ClassTagQuery onClassNotFound( Consumer<ClassNotFoundException> e ) {
         onClassLoadError = e;
+        return this;
+    }
+
+    /**
+     * Add a user-defined entry file to be loaded.
+     */
+    public ClassTagQuery resource( URL resource ) {
+        if ( externalResources == null ) {
+            externalResources = new ArrayList<>();
+        }
+        externalResources.add( resource );
         return this;
     }
 
@@ -92,7 +105,12 @@ public class ClassTagQuery {
      * Load all entries and return it in a set.
      */
     private Set<ClassTagEntry> getEntries() throws IOException {
-        return ClassTagUtils.loadEntries( getEffectiveClassLoader(), new HashSet<>(), entryFilter );
+        List<URL> resources = ClassTagUtils.listResources( getEffectiveClassLoader() );
+        // Add external resources, if any.
+        if ( externalResources != null ) {
+            resources.addAll( externalResources );
+        }
+        return ClassTagUtils.loadEntries( resources, new HashSet<>(), entryFilter );
     }
 
     /**

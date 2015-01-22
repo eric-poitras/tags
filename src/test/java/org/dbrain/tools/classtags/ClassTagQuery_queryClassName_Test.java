@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * Integration tests with Classtags.
  */
-public class ClassTag_queryClassName_Test {
+public class ClassTagQuery_queryClassName_Test {
 
     /**
      * Simple query.

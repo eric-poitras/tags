@@ -49,6 +49,13 @@ public class ClassTags {
     /**
      * True if the class has the specific tag.
      */
+    public boolean containsTag( String tagName ) {
+        return tagName != null && tags.contains( tagName );
+    }
+
+    /**
+     * True if the class has the specific tag.
+     */
     public boolean containsTag( Class<? extends Annotation> tag ) {
         return tag != null && tags.contains( tag.getName() );
     }
@@ -74,6 +81,5 @@ public class ClassTags {
     public String toString() {
         return className + ':' + tags;
     }
-
 
 }
