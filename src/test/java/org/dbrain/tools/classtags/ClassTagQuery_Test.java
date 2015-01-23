@@ -38,6 +38,17 @@ public class ClassTagQuery_Test {
         }
     }
 
+    public static class CustomClassLoader extends ClassLoader {
+
+        public List<String> requestedClassNames = new ArrayList<>();
+
+        @Override
+        public Class<?> loadClass( String name ) throws ClassNotFoundException {
+            requestedClassNames.add( name );
+            return super.loadClass( name );
+        }
+    }
+
     @Test
     public void testLoadCustomTag() throws Exception {
         List<String> q = new ClassTagQuery().resource( getClass().getResource( "/sample.txt" ) )
@@ -62,4 +73,14 @@ public class ClassTagQuery_Test {
         Assert.assertEquals( 2, c.exceptions.size() );
     }
 
+    @Test
+    public void testCustomClassLoader() throws Exception {
+        CustomClassLoader c = new CustomClassLoader();
+        new ClassTagQuery().resource( getClass().getResource( "/sample.txt" ) )
+                           .filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) )
+                           .classLoader( c )
+                           .list();
+        Assert.assertEquals( 2, c.requestedClassNames.size() );
+
+    }
 }
