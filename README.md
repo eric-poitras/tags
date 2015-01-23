@@ -13,7 +13,7 @@ Import the project from maven central:
 <dependency>
 	<groupId>org.dbrain.tool</groupId>
 	<artifactId>classtags</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 </dependency>
 ```
 
