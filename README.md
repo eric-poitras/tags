@@ -11,9 +11,9 @@ Import the project from maven central:
 
 ```
 <dependency>
-	<groupId>org.dbrain.tool</groupId>
-	<artifactId>classtags</artifactId>
-	<version>1.1</version>
+	<groupId>org.dbrain.lib</groupId>
+	<artifactId>dbrain-classtags</artifactId>
+	<version>1.2</version>
 </dependency>
 ```
 
