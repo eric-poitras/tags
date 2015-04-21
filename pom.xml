@@ -19,11 +19,11 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.dbrain.tool</groupId>
-	<artifactId>classtags</artifactId>
+	<groupId>org.dbrain.lib</groupId>
+	<artifactId>dbrain-classtags</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2-SNAPSHOT</version>
-	<name>classtags</name>
+	<version>1.2</version>
+	<name>dbrain-classtags</name>
 	<description>
 		This library enable you to:
 
