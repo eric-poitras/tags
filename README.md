@@ -13,7 +13,7 @@ Import the project from maven central:
 <dependency>
 	<groupId>org.dbrain.lib</groupId>
 	<artifactId>dbrain-classtags</artifactId>
-	<version>1.2</version>
+	<version>2.0</version>
 </dependency>
 ```
 
@@ -52,4 +52,3 @@ For this to works as expected, you have to make sure:
 1. User-defined tag definition files to works with 3rd party libraries.
 2. Enhanced error handling.
 3. Support annotations on packages.
-4. Support older JDK versions ?
