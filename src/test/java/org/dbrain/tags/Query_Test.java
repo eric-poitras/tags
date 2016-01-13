@@ -51,7 +51,7 @@ public class Query_Test {
 
     @Test
     public void testLoadCustomTag() throws Exception {
-        List<String> q = Tags.query().resource( getClass().getResource( "/sample.txt" ) ).filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) ).listAsClassNames();
+        List<String> q = Tags.query().resource( getClass().getResource( "/sample.txt" ) ).filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) ).listClassNames();
         Assert.assertEquals( 2, q.size() );
         Assert.assertTrue( q.contains( "org.dbrain.tools.classtags.Sample" ) );
         Assert.assertTrue( q.contains( "org.dbrain.tools.classtags.Sample2" ) );
@@ -64,14 +64,14 @@ public class Query_Test {
     @Test
     public void testOnError() throws Exception {
         ClassNotFoundConsumer c = new ClassNotFoundConsumer();
-        Tags.query().resource( getClass().getResource( "/sample.txt" ) ).filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) ).onClassNotFound( c ).list();
+        Tags.query().resource( getClass().getResource( "/sample.txt" ) ).filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) ).onClassNotFound( c ).listAllClass();
         Assert.assertEquals( 2, c.exceptions.size() );
     }
 
     @Test
     public void testCustomClassLoader() throws Exception {
         CustomClassLoader c = new CustomClassLoader();
-        Tags.query().resource( getClass().getResource( "/sample.txt" ) ).filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) ).classLoader( c ).list();
+        Tags.query().resource( getClass().getResource( "/sample.txt" ) ).filter( tags -> tags.containsTag( "org.dbrain.tools.classtags.ResourceRest" ) ).classLoader( c ).listAllClass();
         Assert.assertEquals( 2, c.requestedClassNames.size() );
 
     }

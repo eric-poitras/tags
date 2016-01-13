@@ -35,8 +35,10 @@ import org.dbrain.tags.samples.simpleintf.SimpleIntf1;
 import org.dbrain.tags.samples.simpleintf.SimpleIntf2;
 import org.dbrain.tags.samples.simpleintf.SimpleIntfTag;
 import org.dbrain.tags.samples.taggedintf.TaggedIntf;
+import org.dbrain.tags.samples.taggedintf.TaggedIntf2;
 import org.dbrain.tags.samples.taggedintf.TaggedIntfClass1;
 import org.dbrain.tags.samples.taggedintf.TaggedIntfClass2;
+import org.dbrain.tags.samples.taggedintf.TaggedIntfClass3;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -79,7 +81,7 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testQuerySimple3() throws Exception {
-        List<Class> result1 = Tags.query().filter( ct -> ct.containsTag( SimpleTag.class ) ).list();
+        List<Class> result1 = Tags.query().filter( ct -> ct.containsTag( SimpleTag.class ) ).listAllClass();
 
         Assert.assertEquals( 2, result1.size() );
         Assert.assertTrue( result1.contains( SimpleClass1.class ) );
@@ -91,7 +93,7 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testQuerySimple4() throws Exception {
-        List<Class> result1 = Tags.listByTag( SimpleTag.class );
+        List<Class> result1 = Tags.listAllClassByTag( SimpleTag.class );
 
         Assert.assertEquals( 2, result1.size() );
         Assert.assertTrue( result1.contains( SimpleClass1.class ) );
@@ -103,7 +105,7 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testQuerySimpleIntf1() throws Exception {
-        List<Class> result1 = Tags.listByTag( SimpleIntfTag.class );
+        List<Class> result1 = Tags.listAllClassByTag( SimpleIntfTag.class );
 
         Assert.assertEquals( 2, result1.size() );
         Assert.assertTrue( result1.contains( SimpleIntf1.class ) );
@@ -170,9 +172,25 @@ public class ClassQuery_queryName_Test {
     public void testTaggedIntf() throws Exception {
         List<String> result = Tags.listClassNameByTag( TaggedIntf.class );
 
-        Assert.assertEquals( 2, result.size() );
+        Assert.assertEquals( 4, result.size() );
         Assert.assertTrue( result.contains( TaggedIntfClass1.class.getName() ) );
         Assert.assertTrue( result.contains( TaggedIntfClass2.class.getName() ) );
+
+        // Via heritage of TaggedIntf2
+        Assert.assertTrue( result.contains( TaggedIntf2.class.getName() ) );
+        Assert.assertTrue( result.contains( TaggedIntfClass3.class.getName() ) );
+    }
+
+    /**
+     * Query over an inherited tag, excluding abstract and interfaces classes.
+     */
+    @Test
+    public void testTaggedIntfContrete() throws Exception {
+        List<Class> result = Tags.listClassByTag( TaggedIntf.class );
+
+        Assert.assertEquals( 2, result.size() );
+        Assert.assertTrue( result.contains( TaggedIntfClass2.class ) );
+        Assert.assertTrue( result.contains( TaggedIntfClass3.class ) );
     }
 
 

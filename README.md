@@ -12,7 +12,7 @@ Import the project from maven central:
 <dependency>
 	<groupId>org.dbrain</groupId>
 	<artifactId>dbrain-tags</artifactId>
-	<version>3.0</version>
+	<version>3.1</version>
 </dependency>
 ```
 
@@ -44,9 +44,9 @@ public class MyImplSomething implements MyRootSomething {}
 
 Then query tagged classes using the API:
 ```
-  List<String> myTaggedClasses = Tags.listClassNameByTag( MyTag.class );
+  List<Class> myTaggedClasses = Tags.listClassByTag( MyTag.class );
   
-  List<String> myTaggedClasses = Tags.listClassNameByTag( MyRootSomething.class );
+  List<Class> myTaggedClasses = Tags.listClassByTag( MyRootSomething.class );
   
 ```
 

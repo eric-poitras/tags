@@ -16,7 +16,11 @@
 
 package org.dbrain.tags.samples.taggedintf;
 
+import org.dbrain.tags.Tag;
+
 /**
  * Created by epoitras on 25/12/14.
  */
-public abstract class TaggedIntfClass1 implements TaggedIntf {}
+public class TaggedIntfClass3 implements TaggedIntf2 {
+
+}

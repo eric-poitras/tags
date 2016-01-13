@@ -5,6 +5,7 @@ import org.dbrain.tags.impl.TagUtils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,17 +28,23 @@ public class Tags {
      * Query all classes tagged with the specific tag.
      */
     public static List<String> listClassNameByTag( Class<?> tagIntfOrAnnotation ) throws Exception {
-        return new Query().filterEntries( entry -> entry.getTagName().equals( tagIntfOrAnnotation.getName() ) )
-                                  .listAsClassNames();
+        return new Query().filterEntries( entry -> entry.getTagName().equals( tagIntfOrAnnotation.getName() ) ).listClassNames();
     }
 
     /**
-     * Query all classes tagged with the specific tag.
+     * Query all classes, including interfaces and abstract classes, tagged with the specific tag.
      */
-    public static List<Class> listByTag( Class<?> tagIntfOrAnnotation ) throws Exception {
-        return new Query().filterEntries( entry -> entry.getTagName().equals( tagIntfOrAnnotation.getName() ) )
-                                  .list();
+    public static List<Class> listAllClassByTag( Class<?> tagIntfOrAnnotation ) throws Exception {
+        return new Query().filterEntries( entry -> entry.getTagName().equals( tagIntfOrAnnotation.getName() ) ).listAllClass();
     }
+
+    /**
+     * Query all concrete classes tagged with the specific tag.
+     */
+    public static List<Class> listClassByTag( Class<?> tagIntfOrAnnotation ) throws Exception {
+        return new Query().filterEntries( entry -> entry.getTagName().equals( tagIntfOrAnnotation.getName() ) ).listClass();
+    }
+
 
     public static Query query() {
         return new Query();
@@ -166,25 +173,32 @@ public class Tags {
         /**
          * List the classes.
          */
-        public List<String> listAsClassNames() throws IOException {
-            return mapTagsByClassName().values()
-                                       .stream()
-                                       .map( tags -> tags.getClassName() )
-                                       .sorted()
-                                       .collect( Collectors.toList() );
+        public List<String> listClassNames() throws IOException {
+            return mapTagsByClassName().values().stream().map( tags -> tags.getClassName() ).sorted().collect( Collectors.toList() );
         }
 
         /**
-         * List the classes that match the query and loads without error.
+         * List the classes or interfaces that match the query and loads without error.
          */
-        public List<Class> list() throws Exception {
-            return mapTagsByClassName().values()
-                                       .stream()
-                                       .map( tags -> TagUtils.loadClass                   ( getEffectiveClassLoader(),
-                                                                         tags.getClassName(),
-                                                                         onClassLoadError ) )
-                                       .filter( ( c ) -> c != null )
-                                       .collect( Collectors.toList() );
+        public List<Class> listAllClass() throws Exception {
+            return mapTagsByClassName() //
+                    .values() //
+                    .stream() //
+                    .map( tags -> TagUtils.loadClass( getEffectiveClassLoader(), tags.getClassName(), onClassLoadError ) ) //
+                    .filter( ( c ) -> c != null ) //
+                    .collect( Collectors.toList() ); //
+        }
+
+        /**
+         * List the concrete class that match the query and loads without error.
+         */
+        public List<Class> listClass() throws Exception {
+            return mapTagsByClassName() //
+                    .values() //
+                    .stream() //
+                    .map( tags -> TagUtils.loadClass( getEffectiveClassLoader(), tags.getClassName(), onClassLoadError ) ) //
+                    .filter( ( c ) -> c != null && !c.isInterface() && !Modifier.isAbstract( c.getModifiers() ) ) //
+                    .collect( Collectors.toList() ); //
         }
 
 

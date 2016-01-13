@@ -21,8 +21,6 @@ import org.dbrain.tags.Tag;
 /**
  * Created by epoitras on 25/12/14.
  */
-@Tag
-
 public class TaggedIntfClass2 implements TaggedIntf {
 
 }

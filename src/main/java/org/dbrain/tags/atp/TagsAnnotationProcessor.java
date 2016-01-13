@@ -173,6 +173,9 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
                 TypeElement te = asTypeElement( tm );
                 if ( te != null ) {
                     to.add( te );
+
+                    // List all super-interfaces
+                    listAllInterfacesTo( te, to );
                 }
             }
 
