@@ -10,8 +10,8 @@ Import the project from maven central:
 
 ```
 <dependency>
-	<groupId>org.dbrain.lib</groupId>
-	<artifactId>dbrain-classtags</artifactId>
+	<groupId>org.dbrain</groupId>
+	<artifactId>dbrain-tags</artifactId>
 	<version>3.0</version>
 </dependency>
 ```
