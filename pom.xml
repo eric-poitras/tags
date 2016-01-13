@@ -18,16 +18,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dbrain</groupId>
-	<artifactId>dbrain-classtags</artifactId>
+	<artifactId>dbrain-tags</artifactId>
 	<packaging>jar</packaging>
-	<version>2.2-SNAPSHOT</version>
-	<name>dbrain-classtags</name>
+	<version>3.0</version>
+	<name>dbrain-tags</name>
 	<description>
-		This library enable you to:
-
-		Easily tag classes with annotations for later discovery.
-		Avoid using class path scanning.
-		Easy to define new tags.
+		View README.md
 	</description>
 	<url>dbrain.org</url>
 	<licenses>
@@ -127,7 +123,7 @@
 						<configuration>
 							<tasks>
 								<touch file="${project.build.outputDirectory}/META-INF/services/javax.annotation.processing.Processor" mkdirs="true" />
-								<echo file="${project.build.outputDirectory}/META-INF/services/javax.annotation.processing.Processor" message="org.dbrain.classtags.atp.ClassTagsAnnotationProcessor" append="true" />
+								<echo file="${project.build.outputDirectory}/META-INF/services/javax.annotation.processing.Processor" message="org.dbrain.tags.atp.TagsAnnotationProcessor" append="true" />
 							</tasks>
 						</configuration>
 					</execution>

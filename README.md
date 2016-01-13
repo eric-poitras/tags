@@ -1,9 +1,8 @@
-# class tags
+# Tags
 
-#### Use cases
+#### Use case
 
-1. Allows to define tags for each specific uses.
-2. Tag classes with annotations for later discovery while avoiding class path scanning.
+1. Use marker interfaces or annotations to tag classes and discover them later while avoiding class path scanning.
 
 #### Usage
 
@@ -13,26 +12,42 @@ Import the project from maven central:
 <dependency>
 	<groupId>org.dbrain.lib</groupId>
 	<artifactId>dbrain-classtags</artifactId>
-	<version>2.1</version>
+	<version>3.0</version>
 </dependency>
 ```
 
-Define your own tag annotation by annotating it with the @ClassTagAnnotation:
+Start tracking classes by creating annotations and interfaces annotated with @Tag:
 ```
-@ClassTagAnnotation
+
+// Annotation
+@Tag
 @Target( ElementType.TYPE )
 public @interface MyTag {}
+
+// Interface
+@Tag
+public interface MyRootSomething {}
+
 ```
 
 Tag classes:
 ```
 @MyTag
 public class ToDiscover {}
+
+// or
+
+public class MyImplSomething implements MyRootSomething {}
+
+
 ```
 
 Then query tagged classes using the API:
 ```
-  List<String> myTaggedClasses = ClassTagQuery.listClassNameByTag( MyTag.class );
+  List<String> myTaggedClasses = Tags.listClassNameByTag( MyTag.class );
+  
+  List<String> myTaggedClasses = Tags.listClassNameByTag( MyRootSomething.class );
+  
 ```
 
 #### Components
