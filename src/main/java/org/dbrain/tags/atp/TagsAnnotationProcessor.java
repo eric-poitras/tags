@@ -1,9 +1,17 @@
 /*
- * Copyright 2012 8D Technologies, Inc. All Rights Reserved.
+ * Copyright [2015] [Eric Poitras]
  *
- * This software is the proprietary information of 8D Technologies, Inc.
- * Use is subject to license terms.
+ *     Licensed under the Apache License, Version 2.0 (the "License");
+ *     you may not use this file except in compliance with the License.
+ *     You may obtain a copy of the License at
  *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
  */
 package org.dbrain.tags.atp;
 
@@ -59,9 +67,8 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
         types = processingEnv.getTypeUtils();
 
         processingEnv.getTypeUtils();
-        log( Diagnostic.Kind.NOTE, "Initalizing the tag annotation processor." );
+        log( Diagnostic.Kind.NOTE, "Initializing the tag annotation processor." );
         try {
-
             try ( InputStream is = getFileForRead() ) {
                 tagByClasses = mapTagByClass( TagUtils.loadEntries( is ) );
                 toValidateClasses = new HashSet<>( tagByClasses.keySet() );
@@ -74,12 +81,9 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
             log( Diagnostic.Kind.ERROR, t.getMessage() );
             log( Diagnostic.Kind.ERROR, this.toString() );
         }
-
-
     }
 
     private InputStream getFileForRead() throws IOException {
-
         FileObject f = processingEnv.getFiler().getResource( StandardLocation.CLASS_OUTPUT, "", TagUtils.TAG_FILE_NAME );
         log( Diagnostic.Kind.NOTE, "Reading from " + f.toUri() );
         return f.openInputStream();
@@ -97,6 +101,12 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
     }
 
     private OutputStream getFileForWrite() throws IOException {
+        try {
+            FileObject f = processingEnv.getFiler().getResource( StandardLocation.CLASS_OUTPUT, "", TagUtils.TAG_FILE_NAME );
+            f.delete();
+        } catch ( FileNotFoundException e ) {
+            log( Diagnostic.Kind.NOTE, "File did not exists: " + e.getMessage() );
+        }
         FileObject f = processingEnv.getFiler().createResource( StandardLocation.CLASS_OUTPUT, "", TagUtils.TAG_FILE_NAME );
         log( Diagnostic.Kind.NOTE, "Writing to " + f.toUri() );
         return f.openOutputStream();
@@ -145,7 +155,8 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
         // Loop on element to scan
         for ( TypeElement typeElement : elementsToScan ) {
             // Is this annotation a tag anotation ?
-            if ( typeElement.getAnnotation( Tag.class ) != null ) {
+            Tag tag = typeElement.getAnnotation( Tag.class );
+            if ( tag != null ) {
                 if ( result == null ) {
                     result = new HashSet<>();
                 }

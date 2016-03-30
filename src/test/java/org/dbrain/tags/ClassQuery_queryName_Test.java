@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Integration tests with Classtags.
+ * Test Tags.listAllClassNameByTag.
  */
 public class ClassQuery_queryName_Test {
 
@@ -55,11 +55,11 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testQuerySimple1() throws Exception {
-        List<String> result1 = Tags.listClassNameByTag( SimpleTag.class );
+        List<Class> result1 = Tags.listAllClassByTag( SimpleTag.class );
 
         Assert.assertEquals( 2, result1.size() );
-        Assert.assertTrue( result1.contains( SimpleClass1.class.getName() ) );
-        Assert.assertTrue( result1.contains( SimpleClass2.class.getName() ) );
+        Assert.assertTrue( result1.contains( SimpleClass1.class ) );
+        Assert.assertTrue( result1.contains( SimpleClass2.class ) );
     }
 
 
@@ -140,16 +140,16 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testQueryMulti() throws Exception {
-        List<String> result1 = Tags.listClassNameByTag( MultiTag1.class );
-        List<String> result2 = Tags.listClassNameByTag( MultiTag1.class );
-        List<String> result3 = Tags.listClassNameByTag( MultiTag1.class );
+        List<Class> result1 = Tags.listAllClassByTag( MultiTag1.class );
+        List<Class> result2 = Tags.listAllClassByTag( MultiTag1.class );
+        List<Class> result3 = Tags.listAllClassByTag( MultiTag1.class );
 
         Assert.assertEquals( 1, result1.size() );
         Assert.assertEquals( 1, result2.size() );
         Assert.assertEquals( 1, result3.size() );
-        Assert.assertTrue( result1.contains( MultiClass.class.getName() ) );
-        Assert.assertTrue( result2.contains( MultiClass.class.getName() ) );
-        Assert.assertTrue( result3.contains( MultiClass.class.getName() ) );
+        Assert.assertTrue( result1.contains( MultiClass.class ) );
+        Assert.assertTrue( result2.contains( MultiClass.class ) );
+        Assert.assertTrue( result3.contains( MultiClass.class ) );
     }
 
 
@@ -158,11 +158,11 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testInheritedTag() throws Exception {
-        List<String> result = Tags.listClassNameByTag( InheritedTag.class );
+        List<Class> result = Tags.listAllClassByTag( InheritedTag.class );
 
         Assert.assertEquals( 2, result.size() );
-        Assert.assertTrue( result.contains( InheritedClass1.class.getName() ) );
-        Assert.assertTrue( result.contains( InheritedClass2.class.getName() ) );
+        Assert.assertTrue( result.contains( InheritedClass1.class ) );
+        Assert.assertTrue( result.contains( InheritedClass2.class ) );
     }
 
     /**
@@ -170,15 +170,15 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testTaggedIntf() throws Exception {
-        List<String> result = Tags.listClassNameByTag( TaggedIntf.class );
+        List<Class> result = Tags.listAllClassByTag( TaggedIntf.class );
 
         Assert.assertEquals( 4, result.size() );
-        Assert.assertTrue( result.contains( TaggedIntfClass1.class.getName() ) );
-        Assert.assertTrue( result.contains( TaggedIntfClass2.class.getName() ) );
+        Assert.assertTrue( result.contains( TaggedIntfClass1.class ) );
+        Assert.assertTrue( result.contains( TaggedIntfClass2.class ) );
 
         // Via heritage of TaggedIntf2
-        Assert.assertTrue( result.contains( TaggedIntf2.class.getName() ) );
-        Assert.assertTrue( result.contains( TaggedIntfClass3.class.getName() ) );
+        Assert.assertTrue( result.contains( TaggedIntf2.class ) );
+        Assert.assertTrue( result.contains( TaggedIntfClass3.class ) );
     }
 
     /**
@@ -199,12 +199,13 @@ public class ClassQuery_queryName_Test {
      */
     @Test
     public void testInheritedTagOnInterface() throws Exception {
-        List<String> result = Tags.listClassNameByTag( InheritedIntfTag.class );
+        List<Class> result = Tags.listAllClassByTag( InheritedIntfTag.class );
 
         // Annotation are not inherited on interfaces.
         Assert.assertEquals( 1, result.size() );
-        Assert.assertTrue( result.contains( InheritedIntf1.class.getName() ) );
-        Assert.assertFalse( result.contains( InheritedIntf2.class.getName() ) );
+        Assert.assertTrue( result.contains( InheritedIntf1.class ) );
+        Assert.assertFalse( result.contains( InheritedIntf2.class ) );
+
     }
 
 
