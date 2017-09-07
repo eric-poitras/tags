@@ -12,7 +12,7 @@ Import the project from maven central:
 <dependency>
 	<groupId>org.dbrain</groupId>
 	<artifactId>dbrain-tags</artifactId>
-	<version>3.1</version>
+	<version>3.3</version>
 </dependency>
 ```
 
