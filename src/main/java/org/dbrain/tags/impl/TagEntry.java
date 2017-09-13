@@ -18,59 +18,51 @@ package org.dbrain.tags.impl;
 
 import java.util.Objects;
 
-/**
- * Single entry in the meta-info database.
- */
+/** Single entry in the meta-info database. */
 public class TagEntry {
 
-    private final String      className;
-    private final String      tagName;
+  private final String className;
+  private final String tagName;
 
-    public TagEntry( String className, String tagName ) {
-        Objects.nonNull( className );
-        Objects.nonNull( tagName );
-        this.className = className;
-        this.tagName = tagName;
-    }
+  public TagEntry(String className, String tagName) {
+    Objects.nonNull(className);
+    Objects.nonNull(tagName);
+    this.className = className;
+    this.tagName = tagName;
+  }
 
-    /**
-     * @return The name of the class.
-     */
-    public String getClassName() {
-        return className;
-    }
+  /** @return The name of the class. */
+  public String getClassName() {
+    return className;
+  }
 
-    /**
-     * @return The name of the tag's class.
-     */
-    public String getTagName() {
-        return tagName;
-    }
+  /** @return The name of the tag's class. */
+  public String getTagName() {
+    return tagName;
+  }
 
-    @Override
-    public boolean equals( Object o ) {
-        if ( this == o ) return true;
-        if ( o == null || getClass() != o.getClass() ) return false;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
-        TagEntry impl = (TagEntry) o;
+    TagEntry impl = (TagEntry) o;
 
-        if ( !className.equals( impl.className ) ) return false;
-        if ( !tagName.equals( impl.tagName ) ) return false;
+    if (!className.equals(impl.className)) return false;
+    if (!tagName.equals(impl.tagName)) return false;
 
-        return true;
-    }
+    return true;
+  }
 
-    @Override
-    public int hashCode() {
-        int result = className.hashCode();
-        result = 31 * result + tagName.hashCode();
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    int result = className.hashCode();
+    result = 31 * result + tagName.hashCode();
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        return className + ':' + tagName;
-    }
-
-
+  @Override
+  public String toString() {
+    return className + ':' + tagName;
+  }
 }

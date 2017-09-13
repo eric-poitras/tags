@@ -22,11 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to annotate another Annotation or an interface.
- * IT DOES NOT WORK ON CLASSES.
+ * Use this annotation to annotate another Annotation or an interface. IT DOES NOT WORK ON CLASSES.
  */
-@Retention( RetentionPolicy.CLASS )
-@Target( {ElementType.ANNOTATION_TYPE, ElementType.TYPE } )
-public @interface Tag {
-
-}
+@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
+public @interface Tag {}

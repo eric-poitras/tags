@@ -20,6 +20,8 @@ import org.dbrain.tags.samples.complex.ComplexClass1;
 import org.dbrain.tags.samples.complex.ComplexClass2;
 import org.dbrain.tags.samples.complex.ComplexTag1;
 import org.dbrain.tags.samples.complex.ComplexTag2;
+import org.dbrain.tags.samples.external.ExternalClass1;
+import org.dbrain.tags.samples.external.ExternalTag;
 import org.dbrain.tags.samples.inheritance.InheritedClass1;
 import org.dbrain.tags.samples.inheritance.InheritedClass2;
 import org.dbrain.tags.samples.inheritance.InheritedTag;
@@ -208,5 +210,17 @@ public class ClassQuery_queryName_Test {
 
     }
 
+    /**
+     * Query over an inherited tag on interfaces.
+     */
+    @Test
+    public void testExternalTag() throws Exception {
+        List<Class> result = Tags.listAllClassByTag( ExternalTag.class );
+
+        // Annotation are not inherited on interfaces.
+        Assert.assertEquals( 1, result.size() );
+        Assert.assertTrue( result.contains( ExternalClass1.class ) );
+
+    }
 
 }

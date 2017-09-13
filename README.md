@@ -50,6 +50,21 @@ Then query tagged classes using the API:
   
 ```
 
+#### Configuration
+You can configure tags in the context of a specific project by creating a property file in the source code.
+```
+META-INF/tags.properties  
+```
+##### property: externalTags
+Allows to pick classes and annotation that are not defined within your project and ask the annotation processor to track 
+them. Please note that this works only within the current compilation scope. 
+
+```
+externalTags=org.dbrain.tags.samples.external.ExternalTag;org.dbrain.tags.samples.external.ExternalTag2  
+```
+
+
+
 #### Components
 
 1. An annotation processor that keeps track of classes tagged with specific custom annotations.

@@ -31,8 +31,10 @@ public class TagUtilsTest {
     public void testReadTags() throws Exception {
 
         try ( InputStream is = getClass().getResourceAsStream( "/sample.txt" ) ) {
-            Set<TagEntry> x = TagUtils.loadEntries( is );
+            Set<TagEntry> x = TagUtils.loadTagEntries( is );
             Assert.assertEquals( x.size(), 2 );
+            Assert.assertTrue( x.contains( new TagEntry("org.dbrain.tools.classtags.Sample", "org.dbrain.tools.classtags.ResourceRest")));
+            Assert.assertTrue( x.contains( new TagEntry("org.dbrain.tools.classtags.Sample2", "org.dbrain.tools.classtags.ResourceRest")));
         }
     }
 }
