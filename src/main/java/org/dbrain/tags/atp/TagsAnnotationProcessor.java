@@ -225,20 +225,19 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
 
   /** Check if the element still belong to the list or not. */
   private void validateThisClass(Element element) throws Exception {
-    log(Diagnostic.Kind.NOTE, "Inspecting element class: " + element.getSimpleName().toString());
     if (element instanceof TypeElement) {
       TypeElement typeElement = (TypeElement) element;
       String className = getLoadableClassName(typeElement);
       Set<TagEntry> tags = getTagsFrom(className, typeElement);
 
       if (tags != null && !tagByClasses.keySet().contains(className)) {
-        log(Diagnostic.Kind.NOTE, "Found a new tagged class: " + className);
+        // Found a new tagged class.
         tagByClasses.put(className, tags);
       } else if (tags != null) {
-        log(Diagnostic.Kind.NOTE, "Updating tagged class: " + className);
+        // Updating tagged class.
         tagByClasses.put(className, tags);
       } else if (tagByClasses.keySet().contains(className)) {
-        log(Diagnostic.Kind.NOTE, "Found a class that is no longer tagged: " + className);
+        // Found a class that is no longer tagged.
         tagByClasses.remove(className);
       }
 
@@ -276,7 +275,7 @@ public class TagsAnnotationProcessor extends AbstractProcessor {
         try {
           TypeElement element = elements.getTypeElement(className);
           if (element == null) {
-            log(Diagnostic.Kind.NOTE, "Class not found: " + className);
+            //            log(Diagnostic.Kind.NOTE, "Class not found: " + className);
             tagByClasses.remove(className);
           } else {
             validateClass(element);

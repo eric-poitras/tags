@@ -36,191 +36,153 @@ import org.dbrain.tags.samples.simple.SimpleTag;
 import org.dbrain.tags.samples.simpleintf.SimpleIntf1;
 import org.dbrain.tags.samples.simpleintf.SimpleIntf2;
 import org.dbrain.tags.samples.simpleintf.SimpleIntfTag;
-import org.dbrain.tags.samples.taggedintf.TaggedIntf;
-import org.dbrain.tags.samples.taggedintf.TaggedIntf2;
-import org.dbrain.tags.samples.taggedintf.TaggedIntfClass1;
-import org.dbrain.tags.samples.taggedintf.TaggedIntfClass2;
-import org.dbrain.tags.samples.taggedintf.TaggedIntfClass3;
+import org.dbrain.tags.samples.taggedintf.*;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
-/**
- * Test Tags.listAllClassNameByTag.
- */
+/** Test Tags.listAllClassNameByTag. */
 public class ClassQuery_queryName_Test {
 
-    /**
-     * Simple query.
-     */
-    @Test
-    public void testQuerySimple1() throws Exception {
-        List<Class> result1 = Tags.listAllClassByTag( SimpleTag.class );
+  /** Simple query. */
+  @Test
+  public void testQuerySimple1() throws Exception {
+    List<Class> result1 = Tags.listAllClassByTag(SimpleTag.class);
 
-        Assert.assertEquals( 2, result1.size() );
-        Assert.assertTrue( result1.contains( SimpleClass1.class ) );
-        Assert.assertTrue( result1.contains( SimpleClass2.class ) );
-    }
+    Assert.assertEquals(2, result1.size());
+    Assert.assertTrue(result1.contains(SimpleClass1.class));
+    Assert.assertTrue(result1.contains(SimpleClass2.class));
+  }
 
+  /** Simple query. */
+  @Test
+  public void testQuerySimple2() throws Exception {
+    List<Tags.ClassTags> result1 =
+        Tags.query().filter(ct -> ct.containsTag(SimpleTag.class)).listClassTags();
 
-    /**
-     * Simple query.
-     */
-    @Test
-    public void testQuerySimple2() throws Exception {
-        List<Tags.ClassTags> result1 = Tags.query().filter( ct -> ct.containsTag( SimpleTag.class ) ).listAsClassTags();
+    Assert.assertEquals(2, result1.size());
+    Assert.assertTrue(
+        result1.stream().anyMatch(ct -> ct.getClassName().equals(SimpleClass1.class.getName())));
+    Assert.assertTrue(
+        result1.stream().anyMatch(ct -> ct.getClassName().equals(SimpleClass2.class.getName())));
+    Assert.assertTrue(result1.stream().allMatch(ct -> ct.containsTag(SimpleTag.class)));
+  }
 
-        Assert.assertEquals( 2, result1.size() );
-        Assert.assertTrue( result1.stream().anyMatch( ct -> ct.getClassName().equals( SimpleClass1.class.getName() ) ) );
-        Assert.assertTrue( result1.stream().anyMatch( ct -> ct.getClassName().equals( SimpleClass2.class.getName() ) ) );
-        Assert.assertTrue( result1.stream().allMatch( ct -> ct.containsTag( SimpleTag.class ) ) );
-    }
+  /** Simple query. */
+  @Test
+  public void testQuerySimple3() throws Exception {
+    List<Class> result1 = Tags.query().filter(ct -> ct.containsTag(SimpleTag.class)).listAllClass();
 
-    /**
-     * Simple query.
-     */
-    @Test
-    public void testQuerySimple3() throws Exception {
-        List<Class> result1 = Tags.query().filter( ct -> ct.containsTag( SimpleTag.class ) ).listAllClass();
+    Assert.assertEquals(2, result1.size());
+    Assert.assertTrue(result1.contains(SimpleClass1.class));
+    Assert.assertTrue(result1.contains(SimpleClass2.class));
+  }
 
-        Assert.assertEquals( 2, result1.size() );
-        Assert.assertTrue( result1.contains( SimpleClass1.class ) );
-        Assert.assertTrue( result1.contains( SimpleClass2.class ) );
-    }
+  /** Simple query. */
+  @Test
+  public void testQuerySimple4() throws Exception {
+    List<Class> result1 = Tags.listAllClassByTag(SimpleTag.class);
 
-    /**
-     * Simple query.
-     */
-    @Test
-    public void testQuerySimple4() throws Exception {
-        List<Class> result1 = Tags.listAllClassByTag( SimpleTag.class );
+    Assert.assertEquals(2, result1.size());
+    Assert.assertTrue(result1.contains(SimpleClass1.class));
+    Assert.assertTrue(result1.contains(SimpleClass2.class));
+  }
 
-        Assert.assertEquals( 2, result1.size() );
-        Assert.assertTrue( result1.contains( SimpleClass1.class ) );
-        Assert.assertTrue( result1.contains( SimpleClass2.class ) );
-    }
+  /** Query over interfaces. */
+  @Test
+  public void testQuerySimpleIntf1() throws Exception {
+    List<Class> result1 = Tags.listAllClassByTag(SimpleIntfTag.class);
 
-    /**
-     * Query over interfaces.
-     */
-    @Test
-    public void testQuerySimpleIntf1() throws Exception {
-        List<Class> result1 = Tags.listAllClassByTag( SimpleIntfTag.class );
+    Assert.assertEquals(2, result1.size());
+    Assert.assertTrue(result1.contains(SimpleIntf1.class));
+    Assert.assertTrue(result1.contains(SimpleIntf2.class));
+  }
 
-        Assert.assertEquals( 2, result1.size() );
-        Assert.assertTrue( result1.contains( SimpleIntf1.class ) );
-        Assert.assertTrue( result1.contains( SimpleIntf2.class ) );
-    }
+  /** Complex query. */
+  @Test
+  public void testQueryComplex1() throws Exception {
+    List<Tags.ClassTags> result1 = Tags.query().filter(ComplexTag1.class).listClassTags();
 
+    Assert.assertEquals(2, result1.size());
+    Tags.ClassTags sc1 = result1.stream().filter( o -> o.getClassName().equals( ComplexClass1.class.getName() )).findFirst().get();
+    Tags.ClassTags sc2 = result1.stream().filter( o -> o.getClassName().equals( ComplexClass2.class.getName() )).findFirst().get();
+    Assert.assertNotNull(sc1);
+    Assert.assertNotNull(sc2);
+    Assert.assertEquals(sc1.getTags().size(), 1);
+    Assert.assertEquals(sc2.getTags().size(), 2);
+    Assert.assertTrue(sc1.getTags().contains(ComplexTag1.class.getName()));
+    Assert.assertTrue(sc2.getTags().contains(ComplexTag1.class.getName()));
+    Assert.assertTrue(sc2.getTags().contains(ComplexTag2.class.getName()));
+  }
 
-    /**
-     * Complex query.
-     */
-    @Test
-    public void testQueryComplex1() throws Exception {
-        Map<String, Tags.ClassTags> result1 = Tags.query().
-                filter( ct -> ct.containsTag( ComplexTag1.class ) ).mapTagsByClassName();
+  /** Test multiple tags on the same class. */
+  @Test
+  public void testQueryMulti() throws Exception {
+    List<Class> result1 = Tags.listAllClassByTag(MultiTag1.class);
+    List<Class> result2 = Tags.listAllClassByTag(MultiTag1.class);
+    List<Class> result3 = Tags.listAllClassByTag(MultiTag1.class);
 
-        Assert.assertEquals( 2, result1.size() );
-        Tags.ClassTags sc1 = result1.get( ComplexClass1.class.getName() );
-        Tags.ClassTags sc2 = result1.get( ComplexClass2.class.getName() );
-        Assert.assertNotNull( sc1 );
-        Assert.assertNotNull( sc2 );
-        Assert.assertEquals( sc1.getTags().size(), 1 );
-        Assert.assertEquals( sc2.getTags().size(), 2 );
-        Assert.assertTrue( sc1.getTags().contains( ComplexTag1.class.getName() ) );
-        Assert.assertTrue( sc2.getTags().contains( ComplexTag1.class.getName() ) );
-        Assert.assertTrue( sc2.getTags().contains( ComplexTag2.class.getName() ) );
+    Assert.assertEquals(1, result1.size());
+    Assert.assertEquals(1, result2.size());
+    Assert.assertEquals(1, result3.size());
+    Assert.assertTrue(result1.contains(MultiClass.class));
+    Assert.assertTrue(result2.contains(MultiClass.class));
+    Assert.assertTrue(result3.contains(MultiClass.class));
+  }
 
-    }
+  /** Query over an inherited tag. */
+  @Test
+  public void testInheritedTag() throws Exception {
+    List<Class> result = Tags.listAllClassByTag(InheritedTag.class);
 
+    Assert.assertEquals(2, result.size());
+    Assert.assertTrue(result.contains(InheritedClass1.class));
+    Assert.assertTrue(result.contains(InheritedClass2.class));
+  }
 
-    /**
-     * Test multiple tags on the same class.
-     */
-    @Test
-    public void testQueryMulti() throws Exception {
-        List<Class> result1 = Tags.listAllClassByTag( MultiTag1.class );
-        List<Class> result2 = Tags.listAllClassByTag( MultiTag1.class );
-        List<Class> result3 = Tags.listAllClassByTag( MultiTag1.class );
+  /** Query over an inherited tag. */
+  @Test
+  public void testTaggedIntf() throws Exception {
+    List<Class> result = Tags.listAllClassByTag(TaggedIntf.class);
 
-        Assert.assertEquals( 1, result1.size() );
-        Assert.assertEquals( 1, result2.size() );
-        Assert.assertEquals( 1, result3.size() );
-        Assert.assertTrue( result1.contains( MultiClass.class ) );
-        Assert.assertTrue( result2.contains( MultiClass.class ) );
-        Assert.assertTrue( result3.contains( MultiClass.class ) );
-    }
+    Assert.assertEquals(4, result.size());
+    Assert.assertTrue(result.contains(TaggedIntfClass1.class));
+    Assert.assertTrue(result.contains(TaggedIntfClass2.class));
 
+    // Via heritage of TaggedIntf2
+    Assert.assertTrue(result.contains(TaggedIntf2.class));
+    Assert.assertTrue(result.contains(TaggedIntfClass3.class));
+  }
 
-    /**
-     * Query over an inherited tag.
-     */
-    @Test
-    public void testInheritedTag() throws Exception {
-        List<Class> result = Tags.listAllClassByTag( InheritedTag.class );
+  /** Query over an inherited tag, excluding abstract and interfaces classes. */
+  @Test
+  public void testTaggedIntfContrete() throws Exception {
+    List<Class> result = Tags.listClassByTag(TaggedIntf.class);
 
-        Assert.assertEquals( 2, result.size() );
-        Assert.assertTrue( result.contains( InheritedClass1.class ) );
-        Assert.assertTrue( result.contains( InheritedClass2.class ) );
-    }
+    Assert.assertEquals(2, result.size());
+    Assert.assertTrue(result.contains(TaggedIntfClass2.class));
+    Assert.assertTrue(result.contains(TaggedIntfClass3.class));
+  }
 
-    /**
-     * Query over an inherited tag.
-     */
-    @Test
-    public void testTaggedIntf() throws Exception {
-        List<Class> result = Tags.listAllClassByTag( TaggedIntf.class );
+  /** Query over an inherited tag on interfaces. */
+  @Test
+  public void testInheritedTagOnInterface() throws Exception {
+    List<Class> result = Tags.listAllClassByTag(InheritedIntfTag.class);
 
-        Assert.assertEquals( 4, result.size() );
-        Assert.assertTrue( result.contains( TaggedIntfClass1.class ) );
-        Assert.assertTrue( result.contains( TaggedIntfClass2.class ) );
+    // Annotation are not inherited on interfaces.
+    Assert.assertEquals(1, result.size());
+    Assert.assertTrue(result.contains(InheritedIntf1.class));
+    Assert.assertFalse(result.contains(InheritedIntf2.class));
+  }
 
-        // Via heritage of TaggedIntf2
-        Assert.assertTrue( result.contains( TaggedIntf2.class ) );
-        Assert.assertTrue( result.contains( TaggedIntfClass3.class ) );
-    }
+  /** Query over an inherited tag on interfaces. */
+  @Test
+  public void testExternalTag() throws Exception {
+    List<Class> result = Tags.listAllClassByTag(ExternalTag.class);
 
-    /**
-     * Query over an inherited tag, excluding abstract and interfaces classes.
-     */
-    @Test
-    public void testTaggedIntfContrete() throws Exception {
-        List<Class> result = Tags.listClassByTag( TaggedIntf.class );
-
-        Assert.assertEquals( 2, result.size() );
-        Assert.assertTrue( result.contains( TaggedIntfClass2.class ) );
-        Assert.assertTrue( result.contains( TaggedIntfClass3.class ) );
-    }
-
-
-    /**
-     * Query over an inherited tag on interfaces.
-     */
-    @Test
-    public void testInheritedTagOnInterface() throws Exception {
-        List<Class> result = Tags.listAllClassByTag( InheritedIntfTag.class );
-
-        // Annotation are not inherited on interfaces.
-        Assert.assertEquals( 1, result.size() );
-        Assert.assertTrue( result.contains( InheritedIntf1.class ) );
-        Assert.assertFalse( result.contains( InheritedIntf2.class ) );
-
-    }
-
-    /**
-     * Query over an inherited tag on interfaces.
-     */
-    @Test
-    public void testExternalTag() throws Exception {
-        List<Class> result = Tags.listAllClassByTag( ExternalTag.class );
-
-        // Annotation are not inherited on interfaces.
-        Assert.assertEquals( 1, result.size() );
-        Assert.assertTrue( result.contains( ExternalClass1.class ) );
-
-    }
-
+    // Annotation are not inherited on interfaces.
+    Assert.assertEquals(1, result.size());
+    Assert.assertTrue(result.contains(ExternalClass1.class));
+  }
 }

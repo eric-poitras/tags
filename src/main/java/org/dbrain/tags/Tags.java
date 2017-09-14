@@ -20,7 +20,6 @@ import org.dbrain.tags.impl.TagEntry;
 import org.dbrain.tags.impl.TagUtils;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
@@ -33,18 +32,15 @@ public class Tags {
 
   /** Query all classes, including interfaces and abstract classes, tagged with the specific tag. */
   public static List<Class> listAllClassByTag(Class<?> tagIntfOrAnnotation) throws Exception {
-    return new Query()
-        .filterEntries(entry -> entry.getTagName().equals(tagIntfOrAnnotation.getName()))
-        .listAllClass();
+    return new Query().filter(tagIntfOrAnnotation).listAllClass();
   }
 
   /** Query all concrete classes tagged with the specific tag. */
   public static List<Class> listClassByTag(Class<?> tagIntfOrAnnotation) throws Exception {
-    return new Query()
-        .filterEntries(entry -> entry.getTagName().equals(tagIntfOrAnnotation.getName()))
-        .listClass();
+    return new Query().filter(tagIntfOrAnnotation).listClass();
   }
 
+  /** @return A query builder. */
   public static Query query() {
     return new Query();
   }
@@ -59,32 +55,36 @@ public class Tags {
 
     private ClassLoader classLoader;
     private List<URL> externalResources;
-    private Predicate<TagEntry> entryFilter;
     private Predicate<ClassTags> filter;
     private Consumer<ClassNotFoundException> onClassLoadError;
 
     private Query() {}
-
-    /**
-     * Filter entries as read from the metadata info. Use this filter if you are interested only on
-     * specific tags.
-     */
-    private Query filterEntries(Predicate<TagEntry> entryFilter) {
-      this.entryFilter = entryFilter;
-      return this;
-    }
 
     /** @return The class loader that should be used. */
     private ClassLoader getEffectiveClassLoader() {
       return classLoader != null ? classLoader : getClass().getClassLoader();
     }
 
+    /** Filter returned classes that have the specific tag * */
+    public Query filter(Class<?> tagClass) {
+      return filter(tag -> tag.containsTag(tagClass));
+    }
+
+    /** Filter returned classes that have the specific tag * */
+    public Query filter(String tagName) {
+      return filter(tag -> tag.containsTag(tagName));
+    }
     /**
      * Filter returned classes after tags have been grouped by class. Use this filter for more
      * advanced filters like classes having more than one tag or having one tag and not another.
      */
     public Query filter(Predicate<ClassTags> filter) {
-      this.filter = filter;
+      if (this.filter != null) {
+        Predicate<ClassTags> existingFilter = this.filter;
+        this.filter = e -> existingFilter.test(e) && filter.test(e);
+      } else {
+        this.filter = filter;
+      }
       return this;
     }
 
@@ -115,34 +115,36 @@ public class Tags {
     }
 
     /** Load all entries and return it in a set. */
-    private Set<TagEntry> getEntries() throws IOException {
+    private Set<TagEntry> loadEntries() throws IOException {
       List<URL> resources = TagUtils.listTagFileResources(getEffectiveClassLoader());
       // Add external resources, if any.
       if (externalResources != null) {
         resources.addAll(externalResources);
       }
-      return TagUtils.loadTagEntries(resources, new HashSet<>(), entryFilter);
+      return TagUtils.loadTagEntries(resources, new HashSet<>());
     }
 
     /** Aggregate the entries in classes and filter them if necessary. */
-    public Map<String, ClassTags> mapTagsByClassName() throws IOException {
-      Set<TagEntry> entries = getEntries();
+    public List<ClassTags> listClassTags() throws IOException {
+      Set<TagEntry> entries = loadEntries();
 
-      Map<String, ClassTags> result = new HashMap<>(entries.size());
+      // Build the class tags
+      Map<String, ClassTags> classTagsMap = new HashMap<>(entries.size());
       for (TagEntry e : entries) {
-        ClassTags tags = result.get(e.getClassName());
+        ClassTags tags = classTagsMap.get(e.getClassName());
         if (tags == null) {
           tags = new ClassTags(e.getClassName(), new HashSet<>());
-          result.put(e.getClassName(), tags);
+          classTagsMap.put(e.getClassName(), tags);
         }
         tags.getTags().add(e.getTagName());
       }
 
-      // Filter the tags
+      // Filter the class tags
+      ArrayList<ClassTags> result = new ArrayList<>(classTagsMap.size());
       if (filter != null) {
-        for (ClassTags e : new ArrayList<>(result.values())) {
-          if (!filter.test(e)) {
-            result.remove(e.getClassName());
+        for (ClassTags e : new ArrayList<>(classTagsMap.values())) {
+          if (filter.test(e)) {
+            result.add(e);
           }
         }
       }
@@ -150,17 +152,9 @@ public class Tags {
       return result;
     }
 
-    /** List the tags. */
-    public List<ClassTags> listAsClassTags() throws IOException {
-      List<ClassTags> result = new ArrayList<>(mapTagsByClassName().values());
-      result.sort(Comparator.comparing(tags -> tags.getClassName()));
-      return result;
-    }
-
     /** List the classes. */
     public List<String> listClassNames() throws IOException {
-      return mapTagsByClassName()
-          .values()
+      return listClassTags()
           .stream()
           .map(tags -> tags.getClassName())
           .sorted()
@@ -169,9 +163,8 @@ public class Tags {
 
     /** List the classes or interfaces that match the query and loads without error. */
     public List<Class> listAllClass() throws Exception {
-      return mapTagsByClassName() //
-          .values() //
-          .stream() //
+      return listClassTags()
+          .stream()
           .map(
               tags ->
                   TagUtils.loadClass(
@@ -182,8 +175,7 @@ public class Tags {
 
     /** List the concrete class that match the query and loads without error. */
     public List<Class> listClass() throws Exception {
-      return mapTagsByClassName() //
-          .values() //
+      return listClassTags() //
           .stream() //
           .map(
               tags ->
@@ -222,7 +214,7 @@ public class Tags {
     }
 
     /** True if the class has the specific tag. */
-    public boolean containsTag(Class<? extends Annotation> tag) {
+    public boolean containsTag(Class<?> tag) {
       return tag != null && tags.contains(tag.getName());
     }
 

@@ -21,7 +21,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /** Utilities about class tags. */
 public class TagUtils {
@@ -38,11 +37,11 @@ public class TagUtils {
   }
 
   /** Query all classes tagged with the specific tag. */
-  public static <T extends Collection<TagEntry>> T loadTagEntries(
-      List<URL> resources, T to, Predicate<TagEntry> filter) throws IOException {
+  public static <T extends Collection<TagEntry>> T loadTagEntries(List<URL> resources, T to)
+      throws IOException {
     for (URL u : resources) {
       try (InputStream is = u.openStream()) {
-        TagUtils.loadTagEntries(is, to, filter);
+        TagUtils.loadTagEntries(is, to);
       }
     }
     return to;
@@ -53,8 +52,8 @@ public class TagUtils {
    *
    * <p>It returns a map of class names with each a list of tag annotation names found on the class.
    */
-  public static <T extends Collection<TagEntry>> T loadTagEntries(
-      InputStream inf, T to, Predicate<TagEntry> filter) throws IOException {
+  public static <T extends Collection<TagEntry>> T loadTagEntries(InputStream inf, T to)
+      throws IOException {
     BufferedReader in =
         new BufferedReader(new InputStreamReader(inf, Charset.forName(TAG_FILE_CHARSET)));
     String ln;
@@ -63,9 +62,7 @@ public class TagUtils {
         String[] parts = ln.split(":");
         if (parts.length == 2) {
           TagEntry entry = new TagEntry(parts[0], parts[1]);
-          if (filter == null || (filter != null && filter.test(entry))) {
-            to.add(entry);
-          }
+          to.add(entry);
         } else {
           // log( Diagnostic.Kind.WARNING, "Invalid entry found in file: " + ln );
         }
@@ -77,7 +74,7 @@ public class TagUtils {
   }
 
   public static Set<TagEntry> loadTagEntries(InputStream inf) throws IOException {
-    return loadTagEntries(inf, new HashSet<>(), null);
+    return loadTagEntries(inf, new HashSet<>());
   }
 
   /** Write tags to file. */
@@ -99,12 +96,15 @@ public class TagUtils {
   public static Class<?> loadClass(
       ClassLoader cl, String className, Consumer<ClassNotFoundException> onError) {
     try {
-      return cl.loadClass(className);
+      return Class.forName(className, false, cl);
     } catch (ClassNotFoundException e) {
       if (onError != null) {
         onError.accept(e);
       }
       return null;
+    } catch (NoClassDefFoundError e) {
+      System.err.println("Error loading class " + className);
+      throw e;
     }
   }
 }
